@@ -157,18 +157,25 @@ public final class ChatStore: ObservableObject {
             guard let conversationIndex = conversations.firstIndex(where: { $0.id == conversationId }) else {
                 return
             }
-
-            let weatherFunction = ChatQuery.ChatCompletionToolParam(function: .init(
-                name: "getWeatherData",
-                description: "Get the current weather in a given location",
-                parameters: .init(
-                    type: .object,
-                    properties: [
-                        "location": .init(type: .string, description: "The city and state, e.g. San Francisco, CA")
-                    ],
-                    required: ["location"]
+            
+            let weatherFunction = ChatQuery.ChatCompletionToolParam(
+                function: .init(
+                    description: "Get the current weather in a given location",
+                    name: "getWeatherData",
+                    parameters: .init(additionalProperties: try! .init(
+                        unvalidatedValue: [
+                            "type": "object",
+                            "properties": [
+                                "location": [
+                                    "type": "string",
+                                    "description": "The city and state, e.g. San Francisco, CA"
+                                ]
+                            ],
+                            "required": ["location"]
+                        ]
+                    ))
                 )
-            ))
+            )
 
             let functions = [weatherFunction]
             

@@ -245,18 +245,21 @@ for try await result in openAI.chatsStream(query: query) {
 let openAI = OpenAI(apiToken: "...")
 // Declare functions which GPT-3 might decide to call.
 let functions = [
-  FunctionDeclaration(
-      name: "get_current_weather",
-      description: "Get the current weather in a given location",
-      parameters:
-        JSONSchema(
-          type: .object,
-          properties: [
-            "location": .init(type: .string, description: "The city and state, e.g. San Francisco, CA"),
-            "unit": .init(type: .string, enumValues: ["celsius", "fahrenheit"])
-          ],
-          required: ["location"]
-        )
+  FunctionObject(
+    description: "Get the current weather in a given location",
+    name: "getWeatherData",
+    parameters: .init(additionalProperties: try! .init(
+      unvalidatedValue: [
+        "type": "object",
+        "properties": [
+            "location": [
+                "type": "string",
+                "description": "The city and state, e.g. San Francisco, CA"
+            ]
+        ],
+        "required": ["location"]
+      ]
+    ))
   )
 ]
 let query = ChatQuery(

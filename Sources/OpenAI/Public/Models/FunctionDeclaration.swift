@@ -7,19 +7,20 @@
 
 import Foundation
 
-public struct FunctionDeclaration: Codable, Equatable, Sendable {
-    /// The name of the function to be called. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64.
-    public let name: String
-    
-    /// The description of what the function does.
-    public let description: String?
-    
-    /// The parameters the functions accepts, described as a JSON Schema object.
-    public let parameters: JSONSchema?
-  
-    public init(name: String, description: String?, parameters: JSONSchema?) {
-      self.name = name
-      self.description = description
-      self.parameters = parameters
+// There was a custom type here, but for now we'll use the generated FunctionObject instead
+public typealias FunctionDeclaration = FunctionObject
+
+extension FunctionObject {
+    // To backwards-support previous initialization interface. For some reason in generated type description goes before name
+    public init(
+        name: String,
+        description: String? = nil,
+        parameters: FunctionParameters? = nil,
+        strict: Bool? = nil
+    ) {
+        self.description = description
+        self.name = name
+        self.parameters = parameters
+        self.strict = strict
     }
 }

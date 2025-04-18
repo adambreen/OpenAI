@@ -205,18 +205,7 @@ class OpenAITestsDecoder: XCTestCase {
             responseFormat: ChatQuery.ResponseFormat.jsonObject,
             toolChoice: .function("get_current_weather"),
             tools: [
-                .init(function: .init(
-                    name: "get_current_weather",
-                    description: "Get the current weather in a given location",
-                    parameters: .init(
-                        type: .object,
-                        properties: [
-                          "location": .init(type: .string, description: "The city and state, e.g. San Francisco, CA"),
-                          "unit": .init(type: .string, enum: ["celsius", "fahrenheit"])
-                        ],
-                        required: ["location"]
-                      )
-                ))
+                try MockChatQueryFunctionToolFactory().makeFunctionTool()
             ]
         )
         let expectedValue = """

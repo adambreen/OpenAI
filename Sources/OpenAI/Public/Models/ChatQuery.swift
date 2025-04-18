@@ -715,22 +715,21 @@ public struct ChatQuery: Equatable, Codable, Streamable, Sendable {
             }
 
             public struct ToolCallParam: Codable, Equatable, Sendable {
-                public typealias ToolsType = ChatQuery.ChatCompletionToolParam.ToolsType
-
                 /// The ID of the tool call.
                 public let id: String
                 /// The function that the model called.
                 public let function: Self.FunctionCall
                 /// The type of the tool. Currently, only `function` is supported.
-                public let type: Self.ToolsType
+                public let type: String
 
                 public init(
                     id: String,
-                    function:  Self.FunctionCall
+                    function:  Self.FunctionCall,
+                    type: String = "function"
                 ) {
                     self.id = id
                     self.function = function
-                    self.type = .function
+                    self.type = type
                 }
 
                 public struct FunctionCall: Codable, Equatable, Sendable {
@@ -1173,186 +1172,7 @@ public struct ChatQuery: Equatable, Codable, Streamable, Sendable {
         }
     }
 
-    public struct ChatCompletionToolParam: Codable, Equatable, Sendable {
-
-        public let function: Self.FunctionDefinition
-        public let type: Self.ToolsType
-
-        public init(
-            function: Self.FunctionDefinition
-        ) {
-            self.function = function
-            self.type = .function
-        }
-
-        public struct FunctionDefinition: Codable, Equatable, Sendable {
-            /// The name of the function to be called. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64.
-            public let name: String
-
-            /// The description of what the function does.
-            public let description: String?
-
-            /// The parameters the functions accepts, described as a JSON Schema object.
-            /// https://platform.openai.com/docs/guides/text-generation/function-calling
-            /// https://json-schema.org/understanding-json-schema/
-            /// **Python library defines only [String: Object] dictionary.
-            public let parameters: Self.FunctionParameters?
-
-            public init(
-                name: String,
-                description: String? = nil,
-                parameters: Self.FunctionParameters? = nil
-            ) {
-                self.name = name
-                self.description = description
-                self.parameters = parameters
-            }
-
-            /// See the [guide](/docs/guides/gpt/function-calling) for examples, and the [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for documentation about the format.
-            public struct FunctionParameters: Codable, Equatable, Sendable {
-
-                public let type: Self.JSONType
-                public let properties: [String: Property]?
-                public let required: [String]?
-                public let pattern: String?
-                public let const: String?
-                public let `enum`: [String]?
-                public let multipleOf: Int?
-                public let minimum: Int?
-                public let maximum: Int?
-
-                public init(
-                    type: Self.JSONType,
-                    properties: [String : Property]? = nil,
-                    required: [String]? = nil,
-                    pattern: String? = nil,
-                    const: String? = nil,
-                    enum: [String]? = nil,
-                    multipleOf: Int? = nil,
-                    minimum: Int? = nil,
-                    maximum: Int? = nil
-                ) {
-                    self.type = type
-                    self.properties = properties
-                    self.required = required
-                    self.pattern = pattern
-                    self.const = const
-                    self.`enum` = `enum`
-                    self.multipleOf = multipleOf
-                    self.minimum = minimum
-                    self.maximum = maximum
-                }
-
-                public struct Property: Codable, Equatable, Sendable {
-                    public typealias JSONType = ChatQuery.ChatCompletionToolParam.FunctionDefinition.FunctionParameters.JSONType
-
-                    public let type: Self.JSONType
-                    public let description: String?
-                    public let format: String?
-                    public let items: Self.Items?
-                    public let required: [String]?
-                    public let pattern: String?
-                    public let const: String?
-                    public let `enum`: [String]?
-                    public let multipleOf: Int?
-                    public let minimum: Double?
-                    public let maximum: Double?
-                    public let minItems: Int?
-                    public let maxItems: Int?
-                    public let uniqueItems: Bool?
-
-                    public init(
-                        type: Self.JSONType,
-                        description: String? = nil,
-                        format: String? = nil,
-                        items: Self.Items? = nil,
-                        required: [String]? = nil,
-                        pattern: String? = nil,
-                        const: String? = nil,
-                        enum: [String]? = nil,
-                        multipleOf: Int? = nil,
-                        minimum: Double? = nil,
-                        maximum: Double? = nil,
-                        minItems: Int? = nil,
-                        maxItems: Int? = nil,
-                        uniqueItems: Bool? = nil
-                    ) {
-                        self.type = type
-                        self.description = description
-                        self.format = format
-                        self.items = items
-                        self.required = required
-                        self.pattern = pattern
-                        self.const = const
-                        self.`enum` = `enum`
-                        self.multipleOf = multipleOf
-                        self.minimum = minimum
-                        self.maximum = maximum
-                        self.minItems = minItems
-                        self.maxItems = maxItems
-                        self.uniqueItems = uniqueItems
-                    }
-
-                    public struct Items: Codable, Equatable, Sendable {
-                        public typealias JSONType = ChatQuery.ChatCompletionToolParam.FunctionDefinition.FunctionParameters.JSONType
-
-                        public let type: Self.JSONType
-                        public let properties: [String: Property]?
-                        public let pattern: String?
-                        public let const: String?
-                        public let `enum`: [String]?
-                        public let multipleOf: Int?
-                        public let minimum: Double?
-                        public let maximum: Double?
-                        public let minItems: Int?
-                        public let maxItems: Int?
-                        public let uniqueItems: Bool?
-
-                        public init(
-                            type: Self.JSONType,
-                            properties: [String : Property]? = nil,
-                            pattern: String? = nil,
-                            const: String? = nil,
-                            `enum`: [String]? = nil,
-                            multipleOf: Int? = nil,
-                            minimum: Double? = nil,
-                            maximum: Double? = nil,
-                            minItems: Int? = nil,
-                            maxItems: Int? = nil,
-                            uniqueItems: Bool? = nil
-                        ) {
-                            self.type = type
-                            self.properties = properties
-                            self.pattern = pattern
-                            self.const = const
-                            self.`enum` = `enum`
-                            self.multipleOf = multipleOf
-                            self.minimum = minimum
-                            self.maximum = maximum
-                            self.minItems = minItems
-                            self.maxItems = maxItems
-                            self.uniqueItems = uniqueItems
-                        }
-                    }
-                }
-
-
-                public enum JSONType: String, Codable, Sendable {
-                    case integer
-                    case string
-                    case boolean
-                    case array
-                    case object
-                    case number
-                    case null
-                }
-            }
-        }
-
-        public enum ToolsType: String, Codable, Equatable, Sendable {
-            case function
-        }
-    }
+    public typealias ChatCompletionToolParam = ChatCompletionTool
     
     public struct StreamOptions: Codable, Equatable, Sendable {
         
